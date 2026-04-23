@@ -2,7 +2,7 @@
 
 library identifier: 'jenkins-shared-library@main', retriever: modernSCM(
         [$class: 'GitSCMSource',
-        remote: 'https://github.com/jobyjfrancis/jenkins-shared-library.git',
+        remote: 'https://github.com/Musty2025x/jenkins-shared-library.git',
         credentialsId: 'github-credentials'])
 
 
@@ -18,7 +18,7 @@ pipeline {
                     echo "setting app version..."
                     def matcher = readFile('pom.xml') =~ '<version>(.+)</version>'
                     def version = matcher[0][1]
-                    env.IMAGE_NAME = "jobyjfrancis/devops-bootcamp:jma-$version-$BUILD_NUMBER"
+                    env.IMAGE_NAME = "musty101/devops-bootcamp:jma-$version-$BUILD_NUMBER"
                 }
             }
         }
@@ -38,22 +38,6 @@ pipeline {
                     dockerPush(env.IMAGE_NAME)
                 }
              }
-        }
-
-        stage("deploy") {
-            environment {
-                AWS_ACCESS_KEY_ID = credentials('aws_access_key_id')
-                AWS_SECRET_ACCESS_KEY = credentials('aws_secret_access_key')
-                APP_NAME = 'java-maven-app'
-            }
-
-            steps {
-                script {
-                    echo "Deploying docker image..."
-                    sh 'envsubst < kubernetes/deployment.yaml | kubectl apply -f -'
-                    sh 'envsubst < kubernetes/service.yaml | kubectl apply -f -'
-                }
-            }
         }
 
     } 
